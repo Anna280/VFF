@@ -115,7 +115,7 @@ output_folder = "video_clips"
 
 # Load your event data (filtering for passes) from your CSV
 if 'event_data_passes' not in st.session_state:
-    event_data_passes = pd.read_csv("/Users/annadaugaard/Desktop/VFF/explore/test_for_streamit.csv")
+    event_data_passes = pd.read_csv("/Users/annadaugaard/Desktop/VFF/VFF_analytics_src/data/03_model_data/test_for_streamit.csv")
     st.session_state.event_data_passes = event_data_passes
 else:
     event_data_passes = st.session_state.event_data_passes
@@ -154,6 +154,10 @@ if st.button("Generate Clips"):
     if pair_passes.empty:
         st.write(f"No passes found for {from_player} with To: {to_player}.")
     else:
+        # --- SORT THE CLIPS BY UNCERTAINTY ---
+        # Lower uncertainty values will appear first; higher values will be later.
+        pair_passes = pair_passes.sort_values(by="uncertainty", ascending=True)
+        
         # Adjust timestamps with offsets: +322.0 for start, +330.0 for end
         start_times = [x + 322.0 for x in pair_passes["Start Time [s]"]]
         end_times = [x + 330.0 for x in pair_passes["End Time [s]"]]
@@ -161,13 +165,13 @@ if st.button("Generate Clips"):
             created_clips = create_clips(video_file, start_times, end_times, output_folder)
             st.write("Clips generated:")
             with st.expander("Show/Hide Clips", expanded=True):
-                # Display each clip with a description showing the From and To players
+                # Display each clip with a description showing the From and To players, plus uncertainty value.
                 for i, clip in enumerate(created_clips):
                     pass_row = pair_passes.iloc[i]
                     from_id = pass_row["From"]
                     to_id = pass_row["To"]
                     st.video(clip)
-                    st.write(f"**Clip {i+1}: From {from_id} to {to_id}**")
+                    st.write(f"**Clip {i+1}: From {from_id} to {to_id}** (Uncertainty: {pass_row['uncertainty']})")
                          
             # Provide an option to export the clips folder as a zip file
             zip_buffer = create_zip_for_clips(output_folder)
