@@ -312,6 +312,67 @@ else:
     print("\nCould not calculate accuracy (MCMC results not available).")
 
 
+### [Original script remains unchanged until the end of the posterior mean accuracy evaluation] ###
+
+# --- Posterior Predictive Accuracy Evaluation ---
+def evaluate_posterior_accuracy_per_player(eval_data, idata, n_samples=100, description=""):
+    logger.info(f"Evaluating posterior predictive accuracy over {n_samples} samples for {description} split by player...")
+    posterior = idata.posterior.stack(sample=("chain", "draw"))
+    indices = np.random.choice(posterior.sample.size, size=n_samples, replace=False)
+
+    # Group data by player
+    player_groups = {}
+    for event in eval_data:
+        player_id = event.get("player_id", 0)
+        player_groups.setdefault(player_id, []).append(event)
+
+    for player_id, events in player_groups.items():
+        all_accuracies = []
+        best_accuracy = 0.0
+        best_index = None
+        best_params = {}
+
+        for idx in indices:
+            sample_idx = posterior.sample.values[idx]
+            alpha_sample = posterior["alpha"].sel(sample=sample_idx).values.item()
+            beta_sample = posterior["beta"].sel(sample=sample_idx).values.item()
+            gamma_sample = posterior["gamma"].sel(sample=sample_idx).values.item()
+
+            correct = 0
+            for event in events:
+                scores = calculate_score_utility_np(
+                    event["features_overlap"],
+                    event["features_distance"],
+                    event["features_direction"],
+                    alpha_sample, beta_sample, gamma_sample
+                )
+                if np.argmax(scores) == event["chosen_target_index"]:
+                    correct += 1
+
+            acc = correct / len(events)
+            all_accuracies.append(acc)
+
+            if acc > best_accuracy:
+                best_accuracy = acc
+                best_index = sample_idx
+                best_params = {
+                    "alpha": alpha_sample,
+                    "beta": beta_sample,
+                    "gamma": gamma_sample
+                }
+
+        mean_acc = np.mean(all_accuracies)
+        std_acc = np.std(all_accuracies)
+
+        print(f"\n[Player {player_id}] Posterior Predictive Accuracy (Bayesian): {mean_acc:.4f} ± {std_acc:.4f}")
+        print(f"[Player {player_id}] Best Posterior Sample Accuracy: {best_accuracy:.4f} (Sample index: {best_index})")
+        print("[Player {player_id}] Best Parameter Combination:")
+        print(f"  alpha = {best_params['alpha']:.4f}, beta = {best_params['beta']:.4f}, gamma = {best_params['gamma']:.4f}")
+
+# Run posterior predictive accuracy evaluation split per player
+evaluate_posterior_accuracy_per_player(model_input_data_train, idata, n_samples=100, description="TRAINING")
+
+logger.info("Script finished.")
 # --- Plotting Posterior Distributions ---
 # (Keep this section the same)
 try:
@@ -329,5 +390,8 @@ try:
         logger.info("Skipping plot generation (no MCMC data).")
 except Exception as e:
     logger.error(f"Error during plotting: {e}")
+
+
+
 
 logger.info("Script finished.")
