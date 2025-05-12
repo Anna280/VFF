@@ -20,6 +20,7 @@ parts/
 sdist/
 var/
 wheels/
+/Users/annadaugaard/Desktop/VFF/explore/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
