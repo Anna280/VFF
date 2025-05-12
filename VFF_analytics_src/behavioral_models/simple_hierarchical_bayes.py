@@ -20,9 +20,9 @@ warnings.filterwarnings("ignore", category=FutureWarning) # Suppress some pandas
 warnings.filterwarnings("ignore", category=UserWarning) # Suppress some PyMC warnings
 
 # --- File Paths ---
-gps_data_filepath = "/Users/annadaugaard/Desktop/VFF/VFF_analytics_src/data/02_preprocessed/decision_model_data/preprocessed_data_for_decision_making.csv"
-annotation_filepath_p24 = "/Users/annadaugaard/Desktop/VFF/VFF_analytics_src/data/02_preprocessed/decision_model_data/player_24.csv" # Player 24 data
-annotation_filepath_p2 = "/Users/annadaugaard/Desktop/VFF/VFF_analytics_src/data/02_preprocessed/decision_model_data/player_2.csv"    # Player 2 data
+gps_data_filepath = "../VFF_analytics_src/data/02_preprocessed/decision_model_data/preprocessed_data_for_decision_making.csv"
+annotation_filepath_p24 = "../VFF_analytics_src/data/02_preprocessed/decision_model_data/player_24.csv" # Player 24 data
+annotation_filepath_p2 = "../VFF_analytics_src/data/02_preprocessed/decision_model_data/player_2.csv"    # Player 2 data
 
 # --- MCMC Settings ---
 N_DRAWS = 4000

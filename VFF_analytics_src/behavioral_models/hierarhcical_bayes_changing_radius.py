@@ -20,9 +20,9 @@ warnings.filterwarnings("ignore", category=FutureWarning) # Suppress some pandas
 warnings.filterwarnings("ignore", category=UserWarning) # Suppress some PyMC warnings
 
 # --- File Paths (Both are now used for training) ---
-gps_data_filepath = "/Users/annadaugaard/Desktop/VFF/VFF_analytics_src/data/02_preprocessed/decision_model_data/preprocessed_data_for_decision_making.csv"
-annotation_filepath_p24 = "/Users/annadaugaard/Desktop/VFF/VFF_analytics_src/data/02_preprocessed/decision_model_data/player_24.csv" # Player 24 data
-annotation_filepath_p2 = "/Users/annadaugaard/Desktop/VFF/VFF_analytics_src/data/02_preprocessed/decision_model_data/player_2.csv"    # Player 2 data
+gps_data_filepath = "../VFF_analytics_src/data/02_preprocessed/decision_model_data/preprocessed_data_for_decision_making.csv"
+annotation_filepath_p24 = "../VFF_analytics_src/data/02_preprocessed/decision_model_data/player_24.csv" # Player 24 data
+annotation_filepath_p2 = "../VFF_analytics_src/data/02_preprocessed/decision_model_data/player_2.csv"    # Player 2 data
 
 # --- MCMC Settings ---
 N_DRAWS = 5000
@@ -558,14 +558,14 @@ def evaluate_posterior_accuracy_per_player(eval_data, idata, n_samples=100, desc
 
         # Save best outputs to CSV
         df_outputs = pd.DataFrame(best_outputs)
-       # df_outputs.to_csv(f"/Users/annadaugaard/Desktop/VFF/change_radius_results_csv/player_{player_id}_posterior_best_sample_change_r.csv", index=False)
+       # df_outputs.to_csv(f"../change_radius_results_csv/player_{player_id}_posterior_best_sample_change_r.csv", index=False)
 
         # Save full posterior parameter values and accuracies
         df_params = pd.DataFrame(param_records)
-       # df_params.to_csv(f"/Users/annadaugaard/Desktop/VFF/change_radius_results_csv/player_{player_id}_posterior_parameters_change_r.csv", index=False)
+       # df_params.to_csv(f"../change_radius_results_csv/player_{player_id}_posterior_parameters_change_r.csv", index=False)
 
         df_accs = df_params[["sample_position", "accuracy"]]
-       # df_accs.to_csv(f"/Users/annadaugaard/Desktop/VFF/change_radius_results_csv/player_{player_id}_posterior_accuracies_change_r.csv", index=False)
+       # df_accs.to_csv(f"../change_radius_results_csv/player_{player_id}_posterior_accuracies_change_r.csv", index=False)
 
         # Print summary
         mean_acc = np.mean(all_accuracies)
